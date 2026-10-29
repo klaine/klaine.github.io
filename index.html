@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>klaine · tools and synths</title>
+<meta name="description" content="Synths, firmware and browser tools by klaine: Amino, Bizar and Crest for Ableton Move, PRO-8000 firmware for the Behringer PRO-800, MIDI Patchbay and Audio Extractor. Everything runs in the browser.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='2' y='2' width='28' height='28' rx='8' fill='%231c1b19'/%3E%3Cg fill='%23f4f2ee'%3E%3Crect x='8' y='8' width='3.2' height='16' rx='1.6'/%3E%3Cpath d='M12 17.5 19.5 8h4l-7.6 9.2L24 24h-4.2z'/%3E%3C/g%3E%3C/svg%3E">
+<style>
+:root {
+  --bg: #f4f2ee;
+  --surface: #ffffff;
+  --surface-2: #ece9e3;
+  --text: #1c1b19;
+  --muted: #6b675f;
+  --line: #e0dbd2;
+  --accent: #d9480f;
+  --shadow: 0 1px 2px rgb(0 0 0 / .05), 0 8px 28px rgb(0 0 0 / .06);
+  --shadow-hover: 0 2px 4px rgb(0 0 0 / .06), 0 16px 40px rgb(0 0 0 / .10);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111110;
+    --surface: #1a1a19;
+    --surface-2: #242422;
+    --text: #edebe7;
+    --muted: #9b968d;
+    --line: #2e2d2b;
+    --accent: #ff8a4c;
+    --shadow: none;
+    --shadow-hover: 0 0 0 1px #3a3936;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111110;
+  --surface: #1a1a19;
+  --surface-2: #242422;
+  --text: #edebe7;
+  --muted: #9b968d;
+  --line: #2e2d2b;
+  --accent: #ff8a4c;
+  --shadow: none;
+  --shadow-hover: 0 0 0 1px #3a3936;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--text);
+  font: 15px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+a { color: inherit; }
+p { margin: 0; }
+
+.wrap { max-width: 1180px; margin: 0 auto; padding: 0 16px; }
+
+header.top { padding: 56px 0 28px; }
+.who { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
+.who svg { width: 34px; height: 34px; flex: none; }
+.who .handle { font-weight: 650; font-size: 15px; }
+.who a { color: var(--muted); text-decoration: none; font-size: 14px; }
+.who a:hover { color: var(--text); }
+h1 {
+  margin: 0; max-width: 18ch;
+  font-size: clamp(32px, 5.4vw, 56px); line-height: 1.04; letter-spacing: -.035em; font-weight: 750;
+}
+.lede { margin-top: 16px; max-width: 60ch; color: var(--muted); font-size: 17px; }
+
+nav.jump { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
+nav.jump a {
+  text-decoration: none; font-size: 13.5px; padding: 5px 12px; border-radius: 999px;
+  border: 1px solid var(--line); background: var(--surface); color: var(--muted);
+}
+nav.jump a:hover { color: var(--text); border-color: color-mix(in srgb, var(--text) 30%, var(--line)); }
+
+section.group { padding: 28px 0 8px; scroll-margin-top: 16px; }
+.group-head { margin-bottom: 18px; }
+.group-head h2 { margin: 0; font-size: 22px; letter-spacing: -.02em; }
+.group-head p { color: var(--muted); max-width: 70ch; margin-top: 4px; }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: 20px; }
+
+.card {
+  display: flex; flex-direction: column; min-width: 0;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 16px;
+  box-shadow: var(--shadow); overflow: hidden; transition: box-shadow .2s, transform .2s;
+}
+.card:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); }
+.shot { display: block; text-decoration: none; aspect-ratio: 16 / 10; background: var(--surface-2); overflow: hidden; border-bottom: 1px solid var(--line); }
+.shot img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top left; transition: transform .4s; }
+.card:hover .shot img { transform: scale(1.025); }
+.shot.blank {
+  display: grid; place-items: center; font-size: 56px; font-weight: 750; letter-spacing: -.04em; color: var(--muted);
+  background: linear-gradient(135deg, var(--surface-2), color-mix(in srgb, var(--accent) 14%, var(--surface-2)));
+}
+.body { display: flex; flex-direction: column; gap: 10px; padding: 18px 18px 16px; flex: 1; }
+.title { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.title h3 { margin: 0; font-size: 19px; letter-spacing: -.015em; }
+.title h3 a { text-decoration: none; }
+.title .tagline { color: var(--muted); font-size: 14px; }
+.desc { font-size: 14.5px; }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.tag { font-size: 12px; padding: 1px 8px; border-radius: 999px; background: var(--surface-2); color: var(--muted); }
+.tag.warn { color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, var(--surface)); }
+.links { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: auto; padding-top: 6px; }
+.btn {
+  display: inline-flex; align-items: center; gap: 6px; min-height: 34px; padding: 0 12px;
+  border-radius: 9px; border: 1px solid var(--line); background: var(--surface);
+  text-decoration: none; font-size: 14px; white-space: nowrap;
+}
+.btn:hover { border-color: color-mix(in srgb, var(--text) 35%, var(--line)); }
+.btn.primary { background: var(--text); border-color: var(--text); color: var(--surface); font-weight: 600; }
+.btn.primary:hover { opacity: .88; }
+.btn svg { width: 16px; height: 16px; flex: none; }
+.btn.repo { margin-left: auto; color: var(--muted); }
+.btn.repo:hover { color: var(--text); }
+.btn:focus-visible, .shot:focus-visible, nav.jump a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.meta { font-size: 12.5px; color: var(--muted); min-height: 1em; }
+
+.repo-list { display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); }
+.repo-row {
+  display: flex; flex-direction: column; gap: 4px; padding: 14px 16px; text-decoration: none;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+}
+.repo-row:hover { border-color: color-mix(in srgb, var(--text) 30%, var(--line)); }
+.repo-row strong { font-size: 15px; }
+.repo-row span { color: var(--muted); font-size: 13.5px; }
+
+footer { padding: 40px 0 48px; color: var(--muted); font-size: 13px; display: grid; gap: 6px; }
+
+@media (max-width: 560px) {
+  header.top { padding-top: 32px; }
+  .btn.repo { margin-left: 0; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="who">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="2" width="28" height="28" rx="8" fill="var(--text)"/><g fill="var(--bg)"><rect x="8" y="8" width="3.2" height="16" rx="1.6"/><path d="M12 17.5 19.5 8h4l-7.6 9.2L24 24h-4.2z"/></g></svg>
+      <span class="handle">klaine</span>
+      <a href="https://github.com/klaine">github.com/klaine</a>
+    </div>
+    <h1>Synths, firmware and browser tools</h1>
+    <p class="lede">Things I've built for making music, all open source. Every one of them runs in your browser:
+      play the synths with a MIDI keyboard or your computer keys, no install needed.</p>
+    <nav class="jump" id="jump" aria-label="Sections"></nav>
+  </header>
+
+  <main id="catalog"></main>
+
+  <section class="group" id="more" hidden>
+    <div class="group-head"><h2>Also on GitHub Pages</h2></div>
+    <div class="grid" id="more-grid"></div>
+  </section>
+
+  <section class="group" id="other" hidden>
+    <div class="group-head"><h2>Other repositories</h2><p>Public projects without a web page.</p></div>
+    <div class="repo-list" id="other-list"></div>
+  </section>
+
+  <footer>
+    <p>The synths and tools use Web Audio and Web MIDI. Web MIDI works in Chrome, Edge, Opera and Firefox; Safari doesn't have it.</p>
+    <p>Source for everything is on <a href="https://github.com/klaine">GitHub</a>. This page lists my repositories with GitHub Pages and picks up new ones automatically.</p>
+  </footer>
+</div>
+
+<script>
+'use strict';
+
+const USER = 'klaine';
+const SITE = `https://${USER}.github.io/`;
+
+// Curated entries: the copy, screenshots and extra links. Repositories with
+// GitHub Pages that aren't listed here still appear, under "Also on GitHub Pages".
+const CATALOG = [
+  {
+    id: 'synths',
+    title: 'Synths for Ableton Move',
+    intro: 'Sound modules for Ableton Move, built on the Schwung framework. Each one also plays in the browser: the same engine, compiled to WebAssembly.',
+    items: [
+      {
+        repo: 'amino', name: 'Amino', tagline: '8-bit wavetable synth',
+        desc: 'A gritty four-layer wavetable synth in the spirit of Waldorf, with 324 factory presets you can audition before you play.',
+        tags: ['WebAssembly', 'Web MIDI', 'Ableton Move'],
+        links: [['Play', 'amino/'], ['Preset gallery', 'amino/gallery/']],
+      },
+      {
+        repo: 'bizar', name: 'Bizar', tagline: 'Two-engine hybrid synth',
+        desc: 'Two morphing oscillators, a cycling envelope, macros and a drag-to-assign modulation system.',
+        tags: ['WebAssembly', 'Web MIDI', 'Ableton Move'],
+        links: [['Play', 'bizar/']],
+      },
+      {
+        repo: 'crest', name: 'Crest', tagline: '8-voice hybrid polysynth',
+        desc: 'Modelled after the Novation Peak: three wavetable oscillators per voice, Animate buttons, an arpeggiator and a patch library.',
+        tags: ['WebAssembly', 'Web MIDI', 'Ableton Move'],
+        links: [['Play', 'crest/']],
+      },
+    ],
+  },
+  {
+    id: 'firmware',
+    title: 'Synth firmware',
+    intro: 'Replacement firmware for hardware synths, with an editor that talks to the instrument over MIDI.',
+    items: [
+      {
+        repo: 'pro-8000', name: 'PRO-8000', tagline: 'Firmware for the Behringer PRO-800',
+        desc: 'Two layers, four LFOs and four envelopes per voice, a 16-route mod matrix and a sequence in every patch, on an all-analog voice board. Comes with a Web MIDI editor and two in-depth guides.',
+        tags: ['Firmware', 'Web MIDI + SysEx', ['Experimental', 'warn']],
+        shotLink: 'pro-8000/editor/',
+        links: [['Overview', 'pro-8000/'], ['Editor', 'pro-8000/editor/'], ['How it works', 'pro-8000/how-it-works.html'], ['Sound design', 'pro-8000/sound-design.html']],
+      },
+    ],
+  },
+  {
+    id: 'tools',
+    title: 'Browser tools',
+    intro: 'Small single-page utilities. They run entirely on your device; nothing is uploaded.',
+    items: [
+      {
+        repo: 'midi-patchbay', name: 'MIDI Patchbay', tagline: 'Route MIDI between devices',
+        desc: 'Connect any MIDI input to any output with channel, transpose and message filters. Includes an on-screen keyboard and a message monitor.',
+        tags: ['Web MIDI'],
+        links: [['Open', 'midi-patchbay/']],
+      },
+      {
+        repo: 'audio-extractor', name: 'Audio Extractor', tagline: 'Save the sound from a video',
+        desc: 'Drop a video and save its soundtrack, untouched or as MP3, AAC, WAV, FLAC, Opus or Ogg Vorbis. Can pick tracks and trim.',
+        tags: ['ffmpeg.wasm'],
+        links: [['Open', 'audio-extractor/']],
+      },
+    ],
+  },
+];
+
+const GH_ICON = '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>';
+const ARROW = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg>';
+
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const repoURL = (name) => `https://github.com/${USER}/${name}`;
+const dateFmt = new Intl.DateTimeFormat(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+
+function card(item) {
+  const href = (p) => SITE + p;
+  const shotHref = href(item.shotLink || item.links[0][1]);
+  const shot = item.shot === false
+    ? `<a class="shot blank" href="${esc(shotHref)}" tabindex="-1" aria-hidden="true">${esc(item.name.slice(0, 1).toUpperCase())}</a>`
+    : `<a class="shot" href="${esc(shotHref)}" tabindex="-1" aria-hidden="true"><img src="img/${esc(item.repo)}.jpg" alt="" loading="lazy" width="800" height="500"></a>`;
+  const tags = (item.tags || []).map((t) => Array.isArray(t)
+    ? `<span class="tag ${t[1]}">${esc(t[0])}</span>`
+    : `<span class="tag">${esc(t)}</span>`).join('');
+  const links = item.links.map(([label, path], i) =>
+    `<a class="btn${i === 0 ? ' primary' : ''}" href="${esc(href(path))}">${esc(label)}${i === 0 ? ARROW : ''}</a>`).join('');
+  return `<article class="card" data-repo="${esc(item.repo)}">
+    ${shot}
+    <div class="body">
+      <div class="title"><h3><a href="${esc(href(item.links[0][1]))}">${esc(item.name)}</a></h3><span class="tagline">${esc(item.tagline)}</span></div>
+      <p class="desc">${esc(item.desc)}</p>
+      ${tags ? `<div class="tags">${tags}</div>` : ''}
+      <div class="links">${links}<a class="btn repo" href="${esc(repoURL(item.repo))}" aria-label="${esc(item.name)} repository on GitHub">${GH_ICON}Repository</a></div>
+      <p class="meta" data-meta></p>
+    </div>
+  </article>`;
+}
+
+function render() {
+  const groups = CATALOG.filter((g) => g.items.length);
+  document.getElementById('catalog').innerHTML = groups.map((g) => `
+    <section class="group" id="${g.id}">
+      <div class="group-head"><h2>${esc(g.title)}</h2><p>${esc(g.intro)}</p></div>
+      <div class="grid">${g.items.map(card).join('')}</div>
+    </section>`).join('');
+  document.getElementById('jump').innerHTML = groups.map((g) => `<a href="#${g.id}">${esc(g.title)}</a>`).join('');
+}
+
+// Fills in update dates and adds repositories the curated list doesn't know about.
+// The page is complete without this, so any failure (offline, rate limit) is ignored.
+async function enrich() {
+  let repos;
+  try {
+    const res = await fetch(`https://api.github.com/users/${USER}/repos?per_page=100&type=owner&sort=pushed`, { headers: { Accept: 'application/vnd.github+json' } });
+    if (!res.ok) return;
+    repos = await res.json();
+  } catch {
+    return;
+  }
+  if (!Array.isArray(repos)) return;
+  const byName = new Map(repos.map((r) => [r.name, r]));
+  const known = new Set(CATALOG.flatMap((g) => g.items.map((i) => i.repo)));
+  const self = `${USER}.github.io`.toLowerCase();
+
+  for (const el of document.querySelectorAll('.card[data-repo]')) {
+    const r = byName.get(el.dataset.repo);
+    if (!r) continue;
+    const meta = el.querySelector('[data-meta]');
+    if (meta && r.pushed_at) meta.textContent = 'Updated ' + dateFmt.format(new Date(r.pushed_at));
+  }
+
+  const visible = repos.filter((r) => !r.private && !r.fork && !r.archived && r.name.toLowerCase() !== self && !known.has(r.name));
+  const extraPages = visible.filter((r) => r.has_pages);
+  if (extraPages.length) {
+    document.getElementById('more-grid').innerHTML = extraPages.map((r) => card({
+      repo: r.name, name: r.name, tagline: r.language || '', desc: r.description || '', shot: false,
+      links: [['Open', r.homepage && r.homepage.startsWith(SITE) ? r.homepage.slice(SITE.length) : r.name + '/']],
+    })).join('');
+    for (const el of document.querySelectorAll('#more-grid .card')) {
+      const r = byName.get(el.dataset.repo);
+      el.querySelector('[data-meta]').textContent = 'Updated ' + dateFmt.format(new Date(r.pushed_at));
+    }
+    document.getElementById('more').hidden = false;
+  }
+  const others = visible.filter((r) => !r.has_pages);
+  if (others.length) {
+    document.getElementById('other-list').innerHTML = others.map((r) =>
+      `<a class="repo-row" href="${esc(r.html_url)}"><strong>${esc(r.name)}</strong><span>${esc(r.description || r.language || 'No description')}</span></a>`).join('');
+    document.getElementById('other').hidden = false;
+  }
+}
+
+render();
+enrich();
+</script>
+</body>
+</html>
