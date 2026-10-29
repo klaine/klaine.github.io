@@ -146,7 +146,7 @@ footer { padding: 40px 0 48px; color: var(--muted); font-size: 13px; display: gr
       <span class="handle">klaine</span>
       <a href="https://github.com/klaine">github.com/klaine</a>
     </div>
-    <h1>Synths, firmware and browser tools</h1>
+    <h1>Browser tools, synths and firmware</h1>
     <p class="lede">Things I've built for making music, all open source. Every one of them runs in your browser:
       play the synths with a MIDI keyboard or your computer keys, no install needed.</p>
     <nav class="jump" id="jump" aria-label="Sections"></nav>
@@ -179,6 +179,25 @@ const SITE = `https://${USER}.github.io/`;
 // Curated entries: the copy, screenshots and extra links. Repositories with
 // GitHub Pages that aren't listed here still appear, under "Also on GitHub Pages".
 const CATALOG = [
+  {
+    id: 'tools',
+    title: 'Browser tools',
+    intro: 'Small single-page utilities. They run entirely on your device; nothing is uploaded.',
+    items: [
+      {
+        repo: 'midi-patchbay', name: 'MIDI Patchbay', tagline: 'Route MIDI between devices',
+        desc: 'Connect any MIDI input to any output with channel, transpose and message filters. Includes an on-screen keyboard and a message monitor.',
+        tags: ['Web MIDI'],
+        links: [['Open', 'midi-patchbay/']],
+      },
+      {
+        repo: 'audio-extractor', name: 'Audio Extractor', tagline: 'Save the sound from a video',
+        desc: 'Drop a video and save its soundtrack, untouched or as MP3, AAC, WAV, FLAC, Opus or Ogg Vorbis. Can pick tracks and trim.',
+        tags: ['ffmpeg.wasm'],
+        links: [['Open', 'audio-extractor/']],
+      },
+    ],
+  },
   {
     id: 'synths',
     title: 'Synths for Ableton Move',
@@ -215,25 +234,6 @@ const CATALOG = [
         tags: ['Firmware', 'Web MIDI + SysEx', ['Experimental', 'warn']],
         shotLink: 'pro-8000/editor/',
         links: [['Overview', 'pro-8000/'], ['Editor', 'pro-8000/editor/'], ['How it works', 'pro-8000/how-it-works.html'], ['Sound design', 'pro-8000/sound-design.html']],
-      },
-    ],
-  },
-  {
-    id: 'tools',
-    title: 'Browser tools',
-    intro: 'Small single-page utilities. They run entirely on your device; nothing is uploaded.',
-    items: [
-      {
-        repo: 'midi-patchbay', name: 'MIDI Patchbay', tagline: 'Route MIDI between devices',
-        desc: 'Connect any MIDI input to any output with channel, transpose and message filters. Includes an on-screen keyboard and a message monitor.',
-        tags: ['Web MIDI'],
-        links: [['Open', 'midi-patchbay/']],
-      },
-      {
-        repo: 'audio-extractor', name: 'Audio Extractor', tagline: 'Save the sound from a video',
-        desc: 'Drop a video and save its soundtrack, untouched or as MP3, AAC, WAV, FLAC, Opus or Ogg Vorbis. Can pick tracks and trim.',
-        tags: ['ffmpeg.wasm'],
-        links: [['Open', 'audio-extractor/']],
       },
     ],
   },
